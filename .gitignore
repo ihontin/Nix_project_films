@@ -1,0 +1,7 @@
+/.idea
+/venv
+/movie_app/__pycache__
+/movie_app/templates
+/movie_app/migrations
+/movie_app/Pipfile
+/movie_app/Pipfile.lock
