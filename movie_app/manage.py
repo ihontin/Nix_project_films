@@ -2,10 +2,9 @@
 import json
 from app import db
 
-
 # import all models
-from film_genre import film_genre
-from film_director import film_director
+from film_genre import Filmgenre
+from film_director import Filmdirector
 from film import Film
 from user import User
 from genre import Genre
@@ -31,7 +30,7 @@ def seeding_db():
             json_genre = json.load(gen_file)
 
         for row in json_genre:
-            fill_genre = Genre(genre_id=row['genre_id'], title=row['title'])
+            fill_genre = Genre(title=row['title'])
             genre_list.append(fill_genre)
             db.session.add(fill_genre)
 
@@ -40,7 +39,7 @@ def seeding_db():
             json_user = json.load(user_file)
 
         for row in json_user:
-            fill_user = User(id=row['id'], login=row['login'],
+            fill_user = User(login=row['login'],
                              password=row['password'])
             db.session.add(fill_user)
 
@@ -49,7 +48,7 @@ def seeding_db():
             json_film = json.load(film_file)
 
         for row in json_film:
-            fill_film = Film(film_id=row['film_id'], title=row['title'],
+            fill_film = Film(title=row['title'],
                              release=row['release'], poster=row['poster'], rating=row['rating'],
                              description=row['description'], fk_user_id=row['fk_user_id'])
             film_list.append(fill_film)
@@ -57,19 +56,17 @@ def seeding_db():
 
         # Fill FILM_director Table
         for i in range(len(film_list)):
-            directors_list[i].filmdir.append(film_list[i])
+            directors_list[i].fk_filmdir_id.append(film_list[i])
 
-        # Fill FILM_genre Table
-        genre_list[11].filmgen.append(film_list[0])
-        genre_list[0].filmgen.append(film_list[0])
-        genre_list[5].filmgen.append(film_list[1])
-        genre_list[0].filmgen.append(film_list[1])
-        genre_list[0].filmgen.append(film_list[2])
-        genre_list[1].filmgen.append(film_list[3])
-        genre_list[0].filmgen.append(film_list[3])
+        # Fill Filmgenre Table
+        genre_list[0].fk_filmgen_id.append(film_list[0])
+        genre_list[5].fk_filmgen_id.append(film_list[1])
+        genre_list[0].fk_filmgen_id.append(film_list[1])
+        genre_list[0].fk_filmgen_id.append(film_list[2])
+        genre_list[1].fk_filmgen_id.append(film_list[3])
+        genre_list[0].fk_filmgen_id.append(film_list[3])
+
         db.session.commit()
     else:
         print("The database is seeded")
         db.session.commit()
-
-

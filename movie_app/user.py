@@ -9,6 +9,6 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=True)
     film = db.relationship("Film", backref='user', lazy=True)
 
-    # def __init__(self, login, password):
-    #     self.login = login
-    #     self.password = password
+    def __init__(self, login, password):
+        self.login = login
+        self.password = password

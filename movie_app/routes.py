@@ -1,10 +1,11 @@
+"""Routes and function to all models"""
 from app import app, db, api
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, logout_user, login_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restx import Resource, reqparse
-from film_genre import film_genre
-from film_director import film_director
+from film_genre import Filmgenre
+from film_director import Filmdirector
 from film import Film, FilmSchema, model_film
 from user import User
 from genre import Genre
@@ -84,10 +85,11 @@ def film_sort_def(operation, pagin):
 
 @api.route('/films-api/Sort-Searc')
 class SortFilms(Resource):
-    """Sorting films by: """
+    """Sorting films by: release, rating and by_title by default"""
 
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
+        """Choose operation and sorting films"""
         parser = reqparse.RequestParser()
         parser.add_argument('pagination', type=int, default=1)
         parser.add_argument('operation', type=str, default='by_title')
@@ -141,6 +143,7 @@ class SearchFilms(Resource):
 
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
+        """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
         parser = reqparse.RequestParser()
         parser.add_argument('text', type=str, default='none')
@@ -221,10 +224,11 @@ def search_operation_sort_rating(text, operation, ascending,
 
 @api.route('/films-api/Search-reting-Sort')
 class SortRetingSearchFilms(Resource):
-    """Serching films by genre, director, relisedate, sort by rating"""
+    """Searching films by genre, director, relisedate, sort by rating"""
 
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
+        """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
         parser = reqparse.RequestParser()
         parser.add_argument('text', type=str, default='none')  # arg for director and genre

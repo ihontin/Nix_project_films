@@ -2,7 +2,13 @@
 
 from app import db
 
-film_director = db.Table('film_director',
-                         db.Column('film_director_id', db.ForeignKey('film.film_id'), primary_key=True),
-                         db.Column('director_film_id', db.ForeignKey('director.director_id'), primary_key=True)
-                         )
+
+class Filmdirector(db.Model):
+    __tablename__ = 'filmdirector'
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    film_id = db.Column(db.Integer, db.ForeignKey("film.id"))
+    director_id = db.Column(db.Integer, db.ForeignKey("director.id"))
+
+    def __init__(self, film_id, director_id):
+        self.film_id = film_id
+        self.director_id = director_id

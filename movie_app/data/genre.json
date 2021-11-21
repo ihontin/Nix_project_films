@@ -1,54 +1,41 @@
 [
   {
-    "genre_id": 1,
     "title": "Action"
   },
   {
-    "genre_id": 2,
     "title": "Comedy"
   },
   {
-    "genre_id": 3,
     "title": "Drama"
   },
   {
-    "genre_id": 4,
     "title": "Horror"
   },
   {
-    "genre_id": 5,
     "title": "Disaster"
   },
   {
-    "genre_id": 6,
     "title": "Detective"
   },
   {
-    "genre_id": 7,
     "title": "Thriller"
   },
   {
-    "genre_id": 8,
     "title": "Western"
   },
   {
-    "genre_id": 9,
     "title": "Biopic"
   },
   {
-    "genre_id": 10,
     "title": "Romance"
   },
   {
-    "genre_id": 11,
     "title": "Science"
   },
   {
-    "genre_id": 12,
     "title": "Fantasy"
   },
   {
-    "genre_id": 13,
     "title": "Art-house"
   }
 ]
