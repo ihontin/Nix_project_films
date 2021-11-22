@@ -1,7 +1,14 @@
 """Association table between two classes film_genre"""
+
 from app import db
 
-film_genre = db.Table('film_genre',
-                      db.Column('film_genre_id', db.Integer, db.ForeignKey('film.film_id'), primary_key=True),
-                      db.Column('genre_film_id', db.Integer, db.ForeignKey('genre.genre_id'), primary_key=True)
-                      )
+
+class Filmgenre(db.Model):
+    __tablename__ = 'filmgenre'
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    film_id = db.Column(db.Integer, db.ForeignKey("film.id"))
+    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
+
+    def __init__(self, film_id, genre_id):
+        self.film_id = film_id
+        self.genre_id = genre_id

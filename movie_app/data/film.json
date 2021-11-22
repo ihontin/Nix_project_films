@@ -1,6 +1,5 @@
 [
   {
-    "film_id": 1,
     "title": "Avatar",
     "release": "2009-12-17",
     "poster": "https://www.flokq.com/blog/wp-content/uploads/2020/12/avatar1.jpg",
@@ -9,7 +8,6 @@
     "fk_user_id": 1
   },
   {
-    "film_id": 2,
     "title": "Tomorrow never dies",
     "release": "1997-12-9",
     "poster": "https://wallpaperscave.ru/images/original/17/11-14/games-007-tomorrow-never-dies-85.jpg",
@@ -18,7 +16,6 @@
     "fk_user_id": 1
   },
   {
-    "film_id": 3,
     "title": "The Lord of the Rings",
     "release": "2001-12-19",
     "poster": "https://upload.wikimedia.org/wikipedia/ru/a/a9/%D0%92%D0%9A_%D0%92%D0%9A_soundtrack.jpg",
@@ -27,7 +24,6 @@
     "fk_user_id": 1
   },
   {
-    "film_id": 4,
     "title": "The Fifth Element",
     "release": "1997-5-7",
     "poster": "https://sergejjdem2017.usite.pro/999/218/kinopoisk.ru-The-Fifth-Element-824148.jpg",

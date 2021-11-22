@@ -19,8 +19,8 @@ api = Api(app)
 
 def create_db():
     """Create all models"""
-    from film_genre import film_genre
-    from film_director import film_director
+    from film_genre import Filmgenre
+    from film_director import Filmdirector
     from film import Film
     from user import User
     from genre import Genre

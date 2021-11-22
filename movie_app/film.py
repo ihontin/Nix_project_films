@@ -2,27 +2,29 @@
 
 from flask_restx import fields
 from app import db, ma, api
-from film_director import film_director
-from film_genre import film_genre
+from film_director import Filmdirector
+from film_genre import Filmgenre
 
 class Film(db.Model):
-    film_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     title = db.Column(db.String(45), nullable=False)
     release = db.Column(db.Date(), nullable=False)
     poster = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
     fk_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    fk_director_id = db.relationship('Director', secondary=film_director, backref=db.backref('filmdir', lazy='dynamic'))
-    fk_genre_id = db.relationship("Genre", secondary=film_genre, backref=db.backref('filmgen', lazy='dynamic'))
+    fk_director_id = db.relationship('Director', secondary='filmdirector',
+                                  back_populates="fk_filmdir_id")
+    fk_genre_id = db.relationship('Genre', secondary='filmgenre',
+                                  back_populates="fk_filmgen_id")
 
-    # def __init__(self, title, release, poster, rating, description, fk_user_id):
-    #     self.title = title
-    #     self.release = release
-    #     self.poster = poster
-    #     self.rating = rating
-    #     self.description = description
-    #     self.fk_user_id = fk_user_id
+    def __init__(self, title, release, poster, rating, description, fk_user_id):
+        self.title = title
+        self.release = release
+        self.poster = poster
+        self.rating = rating
+        self.description = description
+        self.fk_user_id = fk_user_id
 
 model_film = api.model(
     "Film", {
