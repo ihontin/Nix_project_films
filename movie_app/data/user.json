@@ -2,7 +2,14 @@
   {
     "id": 1,
     "login": "Admin",
-    "password": "pbkdf2:sha256:150000$xgOA5pIw$021cc4ce91eb379e92eaa802eb686e8e8751567c8a3a8b4bbaedd49bbb037125"
+    "password": "pbkdf2:sha256:150000$xgOA5pIw$021cc4ce91eb379e92eaa802eb686e8e8751567c8a3a8b4bbaedd49bbb037125",
+    "admin": 1
+  },
+  {
+    "id": 2,
+    "login": "User1",
+    "password": "pbkdf2:sha256:150000$xgOA5pIw$021cc4ce91eb379e92eaa802eb686e8e8751567c8a3a8b4bbaedd49bbb037125",
+    "admin": 0
   }
 ]
 
