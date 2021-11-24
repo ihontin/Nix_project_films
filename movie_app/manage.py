@@ -40,7 +40,7 @@ def seeding_db():
 
         for row in json_user:
             fill_user = User(login=row['login'],
-                             password=row['password'])
+                             password=row['password'], admin=row['admin'])
             db.session.add(fill_user)
 
         # Fill FILM Table

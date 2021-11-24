@@ -1,73 +1,107 @@
 """Routes and function to all models"""
-from app import app, db, api
-from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_required, logout_user, login_user
-from werkzeug.security import check_password_hash, generate_password_hash
+from app import db, api, login_manager, app
+from flask import jsonify, abort, redirect, url_for
 from flask_restx import Resource, reqparse
 from film_genre import Filmgenre
 from film_director import Filmdirector
-from film import Film, FilmSchema, model_film
-from user import User
+from film import Film, model_film
+from user import User, model_user
 from genre import Genre
 from director import Director
 import datetime
+from flask_login import login_user, current_user, logout_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
 
-one_fild = FilmSchema()
-many_filds = FilmSchema(many=True)
+
+@api.route('/')
+class RootPage(Resource):
+    """Root page"""
+
+    # @api.doc(body=user_login_resource)
+    @api.marshal_with(model_user, code=200, envelope="user")
+    def get(self):
+        return {'Hello': 'World'}
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def log_page():
-    login = request.form.get('login')
-    password = request.form.get('password')
-    if login and password:
-        user_log = User.query.filter_by(login=login).first()
-        if user_log and check_password_hash(user_log.password, password):
-            login_user(user_log)
-            ask_page = request.args.get('next')
-            return redirect(ask_page)
-        else:
-            flash('Not correct login or password', category='error')
-    else:
-        flash('Fill login and password fields', category='error')
-    return render_template('login.html')
+@login_manager.user_loader
+def load_user(id):
+    """ User in session """
+    return db.session.query(User).get(id)
+
+
+@api.route('/login')
+class LogPage(Resource):
+    """Post method for login"""
+
+    @api.marshal_with(model_user, code=200, envelope="user")
+    def post(self):
+        """Post login method"""
+        parser = reqparse.RequestParser()
+        parser.add_argument('nick', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+        args = parser.parse_args()
+        user_log = db.session.query(User).filter(User.login == args['nick']).first()
+        user_pass = False
+        if user_log:
+            user_pass = check_password_hash(user_log.password, str(args['password']))
+        if user_pass:
+            login_user(user_log, remember=True, duration=datetime.timedelta(days=2))
+            return {"id": current_user.id,
+                    "login": current_user.login,
+                    "password": current_user.password,
+                    "admin": current_user.admin}
+        return abort(403, "Nickname or password not correct")
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    """Logout user"""
+    logout_user()
+    return redirect(url_for('root_page'))
 
 
 @app.after_request
 def redirect_to_signin(response):
+    """Redirect to LogPage"""
     if response.status_code == 401:
-        return redirect(url_for('log_page') + '?next=' + request.url)
+        return redirect(url_for('log_page'))
     return response
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    login = request.form.get('login')
-    password = request.form.get('password')
-    password2 = request.form.get('password2')
+@api.route('/register/')
+class Register(Resource):
+    """Post method for login"""
 
-    if request.method == 'POST':
-        if not (login or password or password2):
-            flash('All fields should be filled', category='error')
-        elif password != password2:
-            flash('Passwords should be equal', category='error')
-        elif len(login) > 4 and len(password) > 4 and password == password2:
-            pass_hash = generate_password_hash(password)
-            new_user = User(login=login, password=pass_hash)
+    # @api.doc(body=user_login_resource)
+    @api.marshal_with(model_user, code=200, envelope="user")
+    def post(self):
+        """Add new user"""
+        parser = reqparse.RequestParser()
+        parser.add_argument('nick', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+        parser.add_argument('password2', type=str, required=True)
+        args = parser.parse_args()
+        exist_nitck = db.session.query(User).filter(User.login == args['nick']).first()
+        if exist_nitck is not None:
+            abort(403, f"User with nickname {args['nick']} already exists. Login should be unique")
+        if not (args['nick'] and args['password'] and args['password2']):
+            abort(403, description="All fields must be filled")
+        if args['password'] != args['password2']:
+            abort(406, description="Passwords should be equal")
+        if len(args['nick']) <= 4 or len(args['password']) <= 4:
+            abort(406, description="Passwords and nick should be at least five characters long")
+        elif len(args['nick']) > 4 and len(args['password']) > 4:
+            pass_hash = generate_password_hash(args['password'])
+            new_user = User(login=args['nick'], password=pass_hash, admin=0)
             db.session.add(new_user)
             db.session.commit()
             if new_user:
-                flash('Success!', category='success')
-                return redirect(url_for('log_page'))
+                return {"id": current_user.id,
+                        "login": current_user.login,
+                        "password": current_user.password,
+                        "admin": current_user.admin}
 
-    return render_template('register.html')
-
-
-@app.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('root_page'))
+        return abort(403, "Nickname or password not correct")
 
 
 def film_sort_def(operation, pagin):
@@ -87,6 +121,7 @@ def film_sort_def(operation, pagin):
 class SortFilms(Resource):
     """Sorting films by: release, rating and by_title by default"""
 
+    @login_required
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
         """Choose operation and sorting films"""
@@ -141,6 +176,7 @@ def search_empty_fields(text):
 class SearchFilms(Resource):
     """Search by: genre, director, relisedate"""
 
+    @login_required
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
         """Choose operation and searching films"""
@@ -226,6 +262,7 @@ def search_operation_sort_rating(text, operation, ascending,
 class SortRetingSearchFilms(Resource):
     """Searching films by genre, director, relisedate, sort by rating"""
 
+    @login_required
     @api.marshal_with(model_film, code=200, envelope="film")
     def get(self):
         """Choose operation and searching films"""
@@ -249,16 +286,10 @@ class SortRetingSearchFilms(Resource):
 class UpdateFilms(Resource):
     """Serching films by genre, director, relisedate, sort by rating"""
 
+    @login_required
     @api.marshal_with(model_film, code=200, envelope="film")
     def post(self):
         ...
-
-
-@app.route('/', methods=['GET'])
-def root_page():
-    """Main rout"""
-    all_films = db.session.query(Film.title).all()
-    return render_template('index.html', movies=all_films)
 
 # should find many dirictors
 # search_last_name = db.session.query(Film, Director) \

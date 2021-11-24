@@ -5,6 +5,7 @@ from app import db, ma, api
 from film_director import Filmdirector
 from film_genre import Filmgenre
 
+
 class Film(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     title = db.Column(db.String(45), nullable=False)
@@ -14,7 +15,7 @@ class Film(db.Model):
     description = db.Column(db.Text)
     fk_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     fk_director_id = db.relationship('Director', secondary='filmdirector',
-                                  back_populates="fk_filmdir_id")
+                                     back_populates="fk_filmdir_id")
     fk_genre_id = db.relationship('Genre', secondary='filmgenre',
                                   back_populates="fk_filmgen_id")
 
@@ -26,9 +27,10 @@ class Film(db.Model):
         self.description = description
         self.fk_user_id = fk_user_id
 
+
 model_film = api.model(
     "Film", {
-        "film_id": fields.Integer(required=True),
+        "id": fields.Integer(required=True),
         "title": fields.String(required=True),
         "release": fields.Date(required=True),
         "poster": fields.String(required=True),
@@ -40,6 +42,8 @@ model_film = api.model(
 class FilmSchema(ma.SQLAlchemySchema):
     class Meta:
         fields = ("title", "release", "poster", "rating", "description", "fk_user_id")
+        # model = Film
 
 
-
+one_field = FilmSchema()
+many_fields = FilmSchema(many=True)
