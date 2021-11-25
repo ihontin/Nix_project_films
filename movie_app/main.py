@@ -19,7 +19,7 @@ from director import Director
 @manager.command
 def creation():
     """Database creation"""
-    from app import create_db
+    from manage import create_db
     create_db()
 
 

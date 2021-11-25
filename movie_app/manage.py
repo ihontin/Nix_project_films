@@ -11,6 +11,20 @@ from genre import Genre
 from director import Director
 
 
+
+def create_db():
+    """Create all models"""
+    from film_genre import Filmgenre
+    from film_director import Filmdirector
+    from film import Film
+    from user import User
+    from genre import Genre
+    from director import Director
+
+    db.create_all()
+
+
+
 def seeding_db():
     result = db.session.query(Director).all()
 
@@ -56,7 +70,7 @@ def seeding_db():
 
         # Fill FILM_director Table
         for i in range(len(film_list)):
-            directors_list[i].fk_filmdir_id.append(film_list[i])
+            directors_list[i + 1].fk_filmdir_id.append(film_list[i])
 
         # Fill Filmgenre Table
         genre_list[0].fk_filmgen_id.append(film_list[0])

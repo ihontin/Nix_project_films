@@ -1,7 +1,8 @@
 """Table Director"""
 
 from app import db
-from film_director import Filmdirector
+
+# from movie_app.models.film_director import Filmdirector
 
 class Director(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)

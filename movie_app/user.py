@@ -1,7 +1,8 @@
 """Table User"""
 from flask_login import UserMixin
-from app import db, api
-from flask_restx import fields
+from app import db
+
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -15,10 +16,7 @@ class User(UserMixin, db.Model):
         self.password = password
         self.admin = admin
 
-model_user = api.model(
-    "Film", {
-        "id": fields.Integer(required=True),
-        "login": fields.String(required=True),
-        "password": fields.String(required=True),
-        "admin": fields.String(required=True)})
+
+
+
 
