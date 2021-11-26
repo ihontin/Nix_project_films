@@ -1,9 +1,9 @@
 """Main table Film"""
 
 from flask_restx import fields
-from app import db, ma, api
-from film_director import Filmdirector
-from film_genre import Filmgenre
+from app import db, api
+# from movie_app.models.film_director import Filmdirector
+# from movie_app.models.film_genre import Filmgenre
 
 
 class Film(db.Model):
@@ -27,23 +27,11 @@ class Film(db.Model):
         self.description = description
         self.fk_user_id = fk_user_id
 
-
-model_film = api.model(
-    "Film", {
-        "id": fields.Integer(required=True),
-        "title": fields.String(required=True),
-        "release": fields.Date(required=True),
-        "poster": fields.String(required=True),
-        "rating": fields.Integer(required=True),
-        "description": fields.String(required=False),
-        "fk_user_id": fields.Integer(required=True)})
-
-
-class FilmSchema(ma.SQLAlchemySchema):
-    class Meta:
-        fields = ("title", "release", "poster", "rating", "description", "fk_user_id")
+# class FilmSchema(ma.SQLAlchemySchema):
+#     class Meta:
+#         fields = ("title", "release", "poster", "rating", "description", "fk_user_id")
         # model = Film
 
 
-one_field = FilmSchema()
-many_fields = FilmSchema(many=True)
+# one_field = FilmSchema()
+# many_fields = FilmSchema(many=True)
