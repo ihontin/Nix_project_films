@@ -14,7 +14,10 @@ from user import User
 from genre import Genre
 from director import Director
 from models import model_user, model_login, model_add, model_del_director, model_film
+from logs.logs import Datalog
 
+film_log = Datalog()
+film_log.logger_set()
 
 @api.route('/')
 class RootPage(Resource):
@@ -53,9 +56,11 @@ class LogPage(Resource):
         if user_pass:
             login_user(user_log)
             user_id = current_user.id
+            film_log.save_logs(f"User id: {user_id} logged in")
             return {
                 'id': user_id,
                 'login': True}
+
         abort(403, "Nickname or password not correct")
 
 
@@ -69,6 +74,7 @@ class LogoutPage(Resource):
         """Logout user"""
         user_id = current_user.id
         logout_user()
+        film_log.save_logs(f"User id: {user_id} Logout")
         return {'id': user_id, 'login': False}
 
 
@@ -109,6 +115,7 @@ class Register(Resource):
             db.session.add(new_user)
             db.session.commit()
             if new_user:
+                film_log.save_logs(f"User id: {new_user.id} registered")
                 return {"register": True}
 
         return abort(403, "Nickname or password not correct")
@@ -138,6 +145,10 @@ class SortFilms(Resource):
         parser.add_argument('operation', type=str, default='by_title')
         args = parser.parse_args()
         res = film_sort_def(args['operation'], args['pagination'])
+        if current_user.is_active:
+            film_log.save_logs(f"User id: {current_user.id};"
+                               f" operation: {args['operation']}; "
+                               f" class SortFilms")
         return res
 
 
@@ -197,6 +208,10 @@ class SearchFilms(Resource):
         args = parser.parse_args()
         res = search_by_operation(args['text'], args['operation'],
                                   args['pagination'], args['lower_year'], args['upper_year'])
+        if current_user.is_active:
+            film_log.save_logs(f"User id: {current_user.id};"
+                               f" operation: {args['operation']}; "
+                               f" class SearchFilms")
         return res
 
 
@@ -288,6 +303,10 @@ class SortRetingSearchFilms(Resource):
         res = search_operation_sort_rating(args['text'], args['operation'], args['ascending'],
                                            args['pagination'], args['lower_year'],
                                            args['upper_year'], args['sorting_var'])
+        if current_user.is_active:
+            film_log.save_logs(f"User id: {current_user.id};"
+                               f" operation: {args['operation']}; "
+                               f" class SortRetingSearchFilms")
         return res
 
 
@@ -368,6 +387,8 @@ class UpFilm(Resource):
                              args['poster'], args['rating'],
                              args['description'], args['dir_id'],
                              args['genre'])
+        film_log.save_logs(f"User id: {current_user.id};"
+                           f" Update film id: {args['id']}")
         return db.session.query(Film).filter(Film.id == args['id']).first()
 
 
@@ -390,6 +411,8 @@ class DelFilm(Resource):
         id_deleted_film = film_to_del.id
         db.session.delete(film_to_del)
         db.session.commit()
+        film_log.save_logs(f"User id: {current_user.id};"
+                           f" Delete film id: {args['id']}")
         return {'id': id_deleted_film, 'deleted': True}
 
 
@@ -401,13 +424,18 @@ def director_delete(direct_id):
     if not current_user.id == 1:
         abort(403, "Not enough rights")
     change_film_dir = db.session.query(Filmdirector).filter(Filmdirector.director_id == direct_id).all()
+    films_dir_unknown = []
     if len(change_film_dir):
         for dir_change in change_film_dir:
             dir_change.director_id = 1  # unknown director
+            films_dir_unknown.append(dir_change.film_id)
             db.session.commit()
     id_deleted_director = director_to_del.id
     db.session.delete(director_to_del)
     db.session.commit()
+    film_log.save_logs(f"User id: {current_user.id};"
+                       f" Delete director id: {id_deleted_director}"
+                       f" Films id: {films_dir_unknown} where director 'unknown'")
     return id_deleted_director
 
 
@@ -458,6 +486,8 @@ class AddDirector(Resource):
         db.session.commit()
         added_dir = find_dir(args['first'], args['last'])
         added_id = added_dir.id
+        film_log.save_logs(f"User id: {current_user.id};"
+                           f" New director id: {added_id} added")
         return {'id': added_id, 'added': True}
 
 
@@ -490,6 +520,8 @@ class AddGenre(Resource):
         db.session.commit()
         added_gen = find_gen(args['title'])
         added_id = added_gen.id
+        film_log.save_logs(f"User id: {current_user.id};"
+                           f" New genre id: {added_id} added")
         return {'id': added_id, 'added': True}
 
 
@@ -564,4 +596,6 @@ class AddFilm(Resource):
         find_new_film.fk_genre_id = new_genres
         db.session.commit()
         added_id = find_new_film.id
+        film_log.save_logs(f"User id: {current_user.id};"
+                           f" New film id: {added_id} added")
         return {'id': added_id, 'added': True}
