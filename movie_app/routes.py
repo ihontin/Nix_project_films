@@ -212,6 +212,10 @@ class SearchFilms(Resource):
             film_log.save_logs(f"User id: {current_user.id};"
                                f" operation: {args['operation']}; "
                                f" class SearchFilms")
+        else:
+            film_log.save_logs(f"User anonymous;"
+                               f" operation: {args['operation']}; "
+                               f" class SearchFilms")
         return res
 
 

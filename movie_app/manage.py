@@ -26,6 +26,7 @@ def create_db():
 
 
 def seeding_db():
+    """Seeding database"""
     result = db.session.query(Director).all()
 
     if len(result) == 0:
