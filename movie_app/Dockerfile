@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.9.5-slim
 
 WORKDIR /app
 
@@ -6,11 +6,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY . .
+
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+COPY . .
 
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "main:app" ]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app" ]
