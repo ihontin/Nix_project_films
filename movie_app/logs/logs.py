@@ -18,6 +18,15 @@ class Datalog:
         log_handler.setFormatter(format_log)
         self.logger.addHandler(log_handler)
 
+    def logger_war(self):
+        """Create logger to save and output info about games"""
+        self.logger.setLevel(logging.WARNING)
+        log_handler = logging.FileHandler('logging.log')
+        log_handler.setLevel(logging.WARNING)
+        format_log = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S %p')
+        log_handler.setFormatter(format_log)
+        self.logger.addHandler(log_handler)
+
     @staticmethod
     def show_log_file():
         """Open reed and show the logging file in little messagebox windows"""
@@ -34,3 +43,9 @@ class Datalog:
     def save_logs(self, info):
         """Save log file"""
         self.logger.info(info)
+
+
+film_log = Datalog()
+film_log.logger_set()
+war_log = Datalog()
+war_log.logger_war()

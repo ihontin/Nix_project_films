@@ -6,18 +6,17 @@ from flask_restx import Resource, reqparse
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db, api, login_manager
+from filmapp import db, api, login_manager
 # from film_genre import Filmgenre
-from film_director import Filmdirector
-from film import Film
-from user import User
-from genre import Genre
-from director import Director
-from models import model_user, model_login, model_add, model_del_director, model_film
-from logs.logs import Datalog
+from filmapp.film_director import Filmdirector
+from filmapp.film import Film
+from filmapp.user import User
+from filmapp.genre import Genre
+from filmapp.director import Director
+from filmapp.models import model_user, model_login, model_add, model_del_director, model_film
+from logs.logs import film_log
+print('18 routes')
 
-film_log = Datalog()
-film_log.logger_set()
 
 @api.route('/')
 class RootPage(Resource):
@@ -38,18 +37,22 @@ def load_user(user_id):
 
 @api.route('/login')
 class LogPage(Resource):
-    """Post method for login"""
+    """User login"""
 
     @api.marshal_with(model_login, code=200)
+    @api.doc("User authorization.")
     def post(self):
         """Post login method"""
-        if current_user.is_active:
-            abort(403, "User already login")
+        # if current_user.is_active:
+        #     abort(403, "User already login")
         parser = reqparse.RequestParser()
         parser.add_argument('nick', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
         args = parser.parse_args()
-        user_log = db.session.query(User).filter(User.login == args['nick']).first()
+        # user_log = db.session.query(User).filter(User.login == args['nick']).first()
+        print(args['nick'])
+        user_log = User.query.filter(User.login == args['nick']).first()
+        print(user_log)
         user_pass = False
         if user_log:
             user_pass = check_password_hash(user_log.password, str(args['password']))
@@ -60,7 +63,6 @@ class LogPage(Resource):
             return {
                 'id': user_id,
                 'login': True}
-
         abort(403, "Nickname or password not correct")
 
 
@@ -70,7 +72,8 @@ class LogoutPage(Resource):
 
     @api.marshal_with(model_login, code=200)
     @login_required
-    def get(self):
+    @api.doc("User logout.")
+    def post(self):
         """Logout user"""
         user_id = current_user.id
         logout_user()
@@ -88,9 +91,10 @@ class LogoutPage(Resource):
 
 @api.route('/register/')
 class Register(Resource):
-    """Post method for login"""
+    """User registration"""
 
     @api.marshal_with(model_user, code=200)
+    @api.doc("User registration.")
     def post(self):
         """Add new user"""
         if current_user.is_active:
@@ -138,7 +142,9 @@ class SortFilms(Resource):
     """Sorting films by: release, rating and by_title by default"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Sorting films by release, rating and by_title by default.")
     def get(self):
+        print('145 routes')
         """Choose operation and sorting films"""
         parser = reqparse.RequestParser()
         parser.add_argument('pagination', type=int, default=1)
@@ -196,6 +202,7 @@ class SearchFilms(Resource):
     """Search by: genre, director, relisedate"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Search by genre, director or relise date.")
     def get(self):
         """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
@@ -216,7 +223,7 @@ class SearchFilms(Resource):
             film_log.save_logs(f"User anonymous;"
                                f" operation: {args['operation']}; "
                                f" class SearchFilms")
-        return res
+        return {"Films": res}
 
 
 def chosen_sort(chosen):
@@ -292,6 +299,7 @@ class SortRetingSearchFilms(Resource):
     """Searching films by genre, director, relisedate, sort by rating"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Searching and sort films.")
     def get(self):
         """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
@@ -311,7 +319,7 @@ class SortRetingSearchFilms(Resource):
             film_log.save_logs(f"User id: {current_user.id};"
                                f" operation: {args['operation']}; "
                                f" class SortRetingSearchFilms")
-        return res
+        return db.session.query(Film).filter(Film.id == args['id']).first()
 
 
 def add_up_del_operation(film_id, title, release, poster,
@@ -375,6 +383,7 @@ class UpFilm(Resource):
 
     @login_required
     @api.marshal_with(model_film, code=200)
+    @api.doc("Chenge fields in films")
     def put(self):
         """Updating any field of chosen film"""
         parser = reqparse.RequestParser()
@@ -402,6 +411,7 @@ class DelFilm(Resource):
 
     @login_required
     @api.marshal_with(model_del_director, code=200)
+    @api.doc("Change fields in films")
     def delete(self):
         """Film delete method"""
         parser = reqparse.RequestParser()
@@ -449,6 +459,7 @@ class DelDirector(Resource):
 
     @login_required
     @api.marshal_with(model_del_director, code=200)
+    @api.doc("Delete director.")
     def delete(self):
         """Director delete method"""
         parser = reqparse.RequestParser()
@@ -472,6 +483,7 @@ class AddDirector(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new director.")
     def post(self):
         """Director add method"""
         # if not current_user.id == 1:    # Admin rights only
@@ -507,6 +519,7 @@ class AddGenre(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new genre.")
     def post(self):
         """Genre add method"""
         # if not current_user.id == 1:   # Admin rights only
@@ -565,6 +578,7 @@ class AddFilm(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new film.")
     def post(self):
         """Film add method"""
         parser = reqparse.RequestParser()

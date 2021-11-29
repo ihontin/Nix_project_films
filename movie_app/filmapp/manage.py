@@ -1,6 +1,6 @@
 """Creation and filling database Films library"""
 import json
-from app import db
+from filmapp import db
 
 # import all models
 from film_genre import Filmgenre

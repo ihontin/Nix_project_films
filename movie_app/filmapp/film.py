@@ -1,7 +1,7 @@
 """Main table Film"""
 
 from flask_restx import fields
-from app import db, api
+from filmapp import db, api
 # from movie_app.models.film_director import Filmdirector
 # from movie_app.models.film_genre import Filmgenre
 

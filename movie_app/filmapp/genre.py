@@ -1,5 +1,5 @@
 """Table Genre"""
-from app import db
+from filmapp import db
 # from movie_app.models.film_genre import Filmgenre
 
 class Genre(db.Model):

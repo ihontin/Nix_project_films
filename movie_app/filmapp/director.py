@@ -1,6 +1,6 @@
 """Table Director"""
 
-from app import db
+from filmapp import db
 
 # from movie_app.models.film_director import Filmdirector
 

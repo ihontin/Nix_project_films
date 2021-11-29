@@ -1,6 +1,6 @@
 """Association table between two classes film_genre"""
 
-from app import db
+from filmapp import db
 
 
 class Filmgenre(db.Model):

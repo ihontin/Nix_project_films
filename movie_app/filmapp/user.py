@@ -1,6 +1,6 @@
 """Table User"""
 from flask_login import UserMixin
-from app import db
+from filmapp import db
 
 
 
