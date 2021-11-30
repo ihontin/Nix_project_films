@@ -14,10 +14,11 @@ from user import User
 from genre import Genre
 from director import Director
 from models import model_user, model_login, model_add, model_del_director, model_film
-from logs.logs import Datalog
+from logs import Datalog
 
 film_log = Datalog()
 film_log.logger_set()
+
 
 @api.route('/')
 class RootPage(Resource):
@@ -38,13 +39,14 @@ def load_user(user_id):
 
 @api.route('/login')
 class LogPage(Resource):
-    """Post method for login"""
+    """User login"""
 
     @api.marshal_with(model_login, code=200)
+    @api.doc("User authorization.")
     def post(self):
         """Post login method"""
-        if current_user.is_active:
-            abort(403, "User already login")
+        # if current_user.is_active:
+        #     abort(403, "User already login")
         parser = reqparse.RequestParser()
         parser.add_argument('nick', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
@@ -70,7 +72,8 @@ class LogoutPage(Resource):
 
     @api.marshal_with(model_login, code=200)
     @login_required
-    def get(self):
+    @api.doc("User logout.")
+    def post(self):
         """Logout user"""
         user_id = current_user.id
         logout_user()
@@ -88,9 +91,10 @@ class LogoutPage(Resource):
 
 @api.route('/register/')
 class Register(Resource):
-    """Post method for login"""
+    """User registration"""
 
     @api.marshal_with(model_user, code=200)
+    @api.doc("User registration.")
     def post(self):
         """Add new user"""
         if current_user.is_active:
@@ -138,6 +142,7 @@ class SortFilms(Resource):
     """Sorting films by: release, rating and by_title by default"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Sorting films by release, rating and by_title by default.")
     def get(self):
         """Choose operation and sorting films"""
         parser = reqparse.RequestParser()
@@ -196,6 +201,7 @@ class SearchFilms(Resource):
     """Search by: genre, director, relisedate"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Search by genre, director or relise date.")
     def get(self):
         """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
@@ -292,6 +298,7 @@ class SortRetingSearchFilms(Resource):
     """Searching films by genre, director, relisedate, sort by rating"""
 
     @api.marshal_with(model_film, code=200)
+    @api.doc("Searching and sort films.")
     def get(self):
         """Choose operation and searching films"""
         upper_year = str(datetime.datetime.now().year)
@@ -375,6 +382,7 @@ class UpFilm(Resource):
 
     @login_required
     @api.marshal_with(model_film, code=200)
+    @api.doc("Chenge fields in films")
     def put(self):
         """Updating any field of chosen film"""
         parser = reqparse.RequestParser()
@@ -402,6 +410,7 @@ class DelFilm(Resource):
 
     @login_required
     @api.marshal_with(model_del_director, code=200)
+    @api.doc("Change fields in films")
     def delete(self):
         """Film delete method"""
         parser = reqparse.RequestParser()
@@ -449,6 +458,7 @@ class DelDirector(Resource):
 
     @login_required
     @api.marshal_with(model_del_director, code=200)
+    @api.doc("Delete director.")
     def delete(self):
         """Director delete method"""
         parser = reqparse.RequestParser()
@@ -472,6 +482,7 @@ class AddDirector(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new director.")
     def post(self):
         """Director add method"""
         # if not current_user.id == 1:    # Admin rights only
@@ -507,6 +518,7 @@ class AddGenre(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new genre.")
     def post(self):
         """Genre add method"""
         # if not current_user.id == 1:   # Admin rights only
@@ -565,6 +577,7 @@ class AddFilm(Resource):
 
     @login_required
     @api.marshal_with(model_add, code=200)
+    @api.doc("Create new film.")
     def post(self):
         """Film add method"""
         parser = reqparse.RequestParser()

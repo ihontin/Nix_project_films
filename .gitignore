@@ -4,4 +4,5 @@
 /movie_app/templates
 /movie_app/Pipfile
 /movie_app/Pipfile.lock
-movie_app/models.py
+/movie_app/cert
+/movie_app/migrations

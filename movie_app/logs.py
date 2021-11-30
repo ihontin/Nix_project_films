@@ -34,3 +34,6 @@ class Datalog:
     def save_logs(self, info):
         """Save log file"""
         self.logger.info(info)
+
+
+
