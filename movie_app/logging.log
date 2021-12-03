@@ -1,9 +1,15 @@
-INFO - 28-11-21 14:52:19 PM - User anonymous; operation: relisedate;  class SearchFilms
-INFO - 28-11-21 14:52:46 PM - User id: 2 logged in
-INFO - 28-11-21 14:52:49 PM - User id: 2; operation: relisedate;  class SearchFilms
-INFO - 28-11-21 14:53:13 PM - User id: 2; New director id: 7 added
-INFO - 28-11-21 21:18:50 PM - User id: 2 logged in
-INFO - 28-11-21 21:18:58 PM - User id: 2 Logout
-INFO - 28-11-21 21:19:06 PM - User id: 1 logged in
-INFO - 28-11-21 21:19:27 PM - User id: 1 Logout
-INFO - 28-11-21 21:19:30 PM - User id: 3 registered
+
+INFO - 30-11-21 10:16:49 AM - User id: 1 logged in
+INFO - 30-11-21 10:17:42 AM - User id: 1 Logout
+INFO - 30-11-21 10:23:47 AM - User anonymous; operation: relisedate;  class SearchFilms
+INFO - 30-11-21 10:23:57 AM - User id: 1 logged in
+INFO - 30-11-21 10:24:07 AM - User id: 1 Logout
+INFO - 30-11-21 10:24:10 AM - User id: 3 registered
+INFO - 30-11-21 10:25:03 AM - User id: 3 logged in
+INFO - 30-11-21 10:25:11 AM - User id: 3; New director id: 7 added
+INFO - 30-11-21 10:25:14 AM - User id: 3; New genre id: 14 added
+INFO - 30-11-21 10:25:17 AM - User id: 3; New film id: 5 added
+INFO - 30-11-21 10:25:32 AM - User id: 3; Delete film id: 5
+INFO - 30-11-21 10:26:48 AM - User id: 3 Logout
+INFO - 30-11-21 10:27:25 AM - User id: 1 logged in
+INFO - 30-11-21 10:27:47 AM - User id: 1; Update film id: 4
